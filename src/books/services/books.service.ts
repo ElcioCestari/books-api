@@ -1,13 +1,14 @@
-import { Book } from './entities/book.entity';
-import { Injectable } from '@nestjs/common';
-import { CreateBookDto } from './dto/create-book.dto';
-import { UpdateBookDto } from './dto/update-book.dto';
-import { InjectModel } from '@nestjs/mongoose';
+import { Book } from '../entities/book.entity';
+import { Inject, Injectable } from '@nestjs/common';
+import { CreateBookDto } from '../dto/create-book.dto';
+import { UpdateBookDto } from '../dto/update-book.dto';
+//import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 @Injectable()
 export class BooksService {
-  constructor(@InjectModel('Book') private readonly bookModel: Model<Book>) {}
+  //constructor(@InjectModel('Book') private readonly bookModel: Model<Book>) {}
+  constructor(@Inject('BOOK_MODEL') private bookModel: Model<Book>) {}
 
   async create(createBookDto: CreateBookDto) {
     const b = new Book();
@@ -37,6 +38,6 @@ export class BooksService {
   }
 
   remove(id: string) {
-    return `This action removes a #${id} book`;
+    return this.bookModel.findByIdAndRemove(id);
   }
 }
