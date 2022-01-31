@@ -1,9 +1,9 @@
 import { DatabaseModule } from './../database/database.module';
-import { MongooseModule } from '@nestjs/mongoose';
+//import { MongooseModule } from '@nestjs/mongoose';
 import { Module } from '@nestjs/common';
 import { BooksService } from './services/books.service';
 import { BooksController } from './controllers/books.controller';
-import { BookSchema } from './schemas/book.schema';
+//import { BookSchema } from './schemas/book.schema';
 import { booksProviders } from './providers/book.providers';
 
 @Module({
