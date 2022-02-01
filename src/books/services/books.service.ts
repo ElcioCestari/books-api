@@ -2,7 +2,6 @@ import { Book } from '../entities/book.entity';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CreateBookDto } from '../dto/create-book.dto';
 import { UpdateBookDto } from '../dto/update-book.dto';
-//import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 @Injectable()
@@ -11,12 +10,7 @@ export class BooksService {
   constructor(@Inject('BOOK_MODEL') private bookModel: Model<Book>) {}
 
   async create(createBookDto: CreateBookDto) {
-    const b = new Book();
-    b.author = createBookDto.author;
-    b.isbn = createBookDto.isbn;
-    b.name = createBookDto.name;
-
-    const bookCreated = new this.bookModel(b);
+    const bookCreated = new this.bookModel(createBookDto);
     return await bookCreated.save();
   }
 
@@ -36,15 +30,26 @@ export class BooksService {
   }
 
   async update(id: string, updateBookDto: UpdateBookDto) {
-    const book = new Book();
-    book.author = updateBookDto.author;
-    book.isbn = updateBookDto.isbn;
-    book.name = updateBookDto.name;
-    await this.bookModel.updateOne({ _id: id }, book).exec();
-    return this.bookModel.findById(id);
+    const book: Book = await this.bookModel.findByIdAndUpdate(id, {
+      name: updateBookDto.name,
+      isbn: updateBookDto.isbn,
+      author: updateBookDto.author,
+    });
+    if (!book)
+      throw new HttpException(
+        `Book with ${id} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    return book;
   }
 
-  remove(id: string) {
-    return this.bookModel.findByIdAndRemove(id);
+  async remove(id: string) {
+    const book: Book = await this.bookModel.findByIdAndRemove(id);
+    if (!book)
+      throw new HttpException(
+        `Book with ${id} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    return book;
   }
 }
