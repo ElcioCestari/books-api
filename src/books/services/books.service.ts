@@ -6,7 +6,6 @@ import { Model } from 'mongoose';
 
 @Injectable()
 export class BooksService {
-  //constructor(@InjectModel('Book') private readonly bookModel: Model<Book>) {}
   constructor(@Inject('BOOK_MODEL') private bookModel: Model<Book>) {}
 
   async create(createBookDto: CreateBookDto) {
